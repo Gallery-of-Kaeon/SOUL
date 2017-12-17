@@ -1,0 +1,49 @@
+SOUL
+	
+	Philosophy
+		
+		-
+			SOUL is an general purpose AI utility that can be embedded into a philosopher's atlas.
+		-
+	
+	Principles
+		
+		SOUL Core
+			
+			-
+				A SOUL Core is an object that can be trained to correlate between input and output
+				strings.
+				
+				It contains a corpus of correlations between input and output strings, and has four
+				functions.
+				
+				The first function is the train function. This function takes two strings and a
+				number between zero and one. The first string is the input, the second string is
+				the output, and the number represents how well the input and the output match up.
+				Based on this correlation, the function updates the corpus.
+				
+				The second function is the generate function. This function takes one string as an
+				input, and returns a string based on how the input strings matches up with the
+				contents of the corpus.
+				
+				The third function is the load function. This function takes a string and rewrites
+				its corpus based on the content of the string.
+				
+				The fourth function is the write function. This function returns the state of the
+				corpus in the form of a string such that the corpus could be returned to its
+				current state by calling the load function with the returned string.
+			-
+			
+		SOULs
+			
+			-
+				SOULs are a special type of Philosopher's Stone.
+				
+				They may be connected to any type of Philosopher's Stone. However, they may only be
+				connected to other Philosopher's Stones using private connections. For every other
+				Philosopher's Stone they are connected to, they must contain one SOUL Core.
+				
+				Every time they receive a packet through the on call function, they must run the
+				contents of the packet through each core, and then call the core's respective
+				connection using the output.
+			-
