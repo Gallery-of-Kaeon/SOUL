@@ -4,4 +4,6 @@ SOUL is a set of general purpose machine learning utilities that establish a uni
 
 ## Direct Links
 
+[API](https://github.com/Gallery-of-Kaeon/SOUL/tree/master/SOUL/API)
+
 [Specification](https://github.com/Gallery-of-Kaeon/SOUL/tree/master/SOUL/Specification)
