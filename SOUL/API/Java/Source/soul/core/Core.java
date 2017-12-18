@@ -18,9 +18,9 @@ public class Core {
 	public Model currentModel;
 	
 	public Core() {
-		
-		models.add(new NeuralNetworkModel());
+
 		models.add(new StringMeshModel());
+		models.add(new NeuralNetworkModel());
 		
 		currentModel = models.get(0);
 	}
@@ -33,6 +33,12 @@ public class Core {
 		set.output = output;
 		
 		set.correlation = correlation;
+		
+		for(int i = 0; i < sets.size(); i++) {
+			
+			if(set.equals(sets.get(i)))
+				return;
+		}
 		
 		sets.add(set);
 		
