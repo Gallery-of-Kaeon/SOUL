@@ -6,6 +6,7 @@ import one.Element;
 import one.ElementUtilities;
 import one_plus.ONEPlus;
 import soul.core.models.neural_network.NeuralNetworkModel;
+import soul.core.models.string_mesh.StringMeshModel;
 import soul.core.utilities.CoreSet;
 import soul.core.utilities.Model;
 
@@ -19,6 +20,7 @@ public class Core {
 	public Core() {
 		
 		models.add(new NeuralNetworkModel());
+		models.add(new StringMeshModel());
 		
 		currentModel = models.get(0);
 	}

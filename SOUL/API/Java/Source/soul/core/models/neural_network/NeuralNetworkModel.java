@@ -10,6 +10,10 @@ public class NeuralNetworkModel extends Model {
 	
 	public NeuralNetwork neuralNetwork = new NeuralNetwork();
 	
+	public String getName() {
+		return "Neural Network";
+	}
+	
 	public void train(String input, String output, double correlation) {
 		NeuralNetworkUtilities.train(neuralNetwork, stringToList(input), stringToList(output), correlation);
 	}
