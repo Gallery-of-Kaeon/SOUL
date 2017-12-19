@@ -42,12 +42,27 @@ public class Core {
 		
 		sets.add(set);
 		
-		for(int i = 0; i < models.size(); i++)
-			models.get(i).train(input, output, correlation);
+		for(int i = 0; i < models.size(); i++) {
+			
+			try {
+				models.get(i).train(input, output, correlation);
+			}
+			
+			catch(Exception exception) {
+				
+			}
+		}
 	}
 	
 	public String process(String input) {
-		return currentModel.process(input);
+		
+		try {
+			return currentModel.process(input);
+		}
+		
+		catch(Exception exception) {
+			return "";
+		}
 	}
 	
 	public void load(String corpus) {
@@ -127,11 +142,13 @@ public class Core {
 			Element correlationData = new Element();
 			correlationData.content = "" + sets.get(i).correlation;
 			
-			ElementUtilities.addChild(input, correlationData);
+			ElementUtilities.addChild(correlation, correlationData);
 
 			ElementUtilities.addChild(set, input);
 			ElementUtilities.addChild(set, output);
 			ElementUtilities.addChild(set, correlation);
+			
+			ElementUtilities.addChild(corpus, set);
 		}
 		
 		Element modelsElement = new Element();
@@ -143,7 +160,14 @@ public class Core {
 			model.content = models.get(i).getName();
 			
 			Element state = new Element();
-			state.content = models.get(i).write();
+			
+			try {
+				state.content = models.get(i).write();
+			}
+			
+			catch(Exception exception) {
+				
+			}
 			
 			ElementUtilities.addChild(model, state);
 			

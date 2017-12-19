@@ -71,9 +71,9 @@ public class Corpus {
 				
 				Input input = new Input(inputElement.content);
 				
-				for(int j = 0; j < one.children.size(); j++) {
+				for(int j = 0; j < inputElement.children.size(); j++) {
 	
-					Element outputElement = inputElement.children.get(i);
+					Element outputElement = inputElement.children.get(j);
 					
 					input.addOutput(
 							outputElement.content, 
