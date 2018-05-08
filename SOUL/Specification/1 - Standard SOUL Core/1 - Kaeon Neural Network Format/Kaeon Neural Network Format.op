@@ -13,9 +13,15 @@ Kaeon Neural Network Format
 			
 			-
 				The document will contain an indefinite number of elements, each containing the
-				content "Layer". These elements each correspond to a layer in a neural network. The
+				content "Layer" or "Use".
+				
+				Elements with the content "Layer" correspond to a layer in a neural network. The
 				order in which they are listed dictates the order of the layers in the neural
 				network.
+				
+				Elements with the content "Use" may have an indefinite number of children, each
+				with content specifying the name of a module containing various activation
+				functions. Each of said activation functions will have a string alias.
 				
 				Nested within the layer elements will be an indefinite number of elements
 				containing the content "Neuron", corresponding to neurons within their respective
@@ -35,12 +41,15 @@ Kaeon Neural Network Format
 				element is not present, the neuron will have a bias of zero. This element may not
 				be present in a neuron belonging the first layer of the neural network.
 				
-				The element with the content "Activation" will have children that constitute Kaeon
-				FUSION code that returns a number between zero and one, corresponding to the
-				activation function of the neuron. This element may not be present in a neuron
-				belonging the first layer of the neural network. If the activation element is not
-				present in a neuron belonging to a layer following the first layer, the neuron's
-				activation function will be the following sigmoid function:
+				If an element with the content "Activation" is present among the children of a
+				neuron element, it must have a child containing the alias of an activation function
+				provided by one of the modules referenced by a use element. The referenced
+				activation will be the activation function of the neuron defined by said neuron
+				element.
+				
+				If an element with the content "Activation" is not present among the children of a
+				neuron element, the neuron defined by said neuron element will have the following
+				activation function:
 				
 				f(x) = 1 / (1 + e^-x)
 			-
