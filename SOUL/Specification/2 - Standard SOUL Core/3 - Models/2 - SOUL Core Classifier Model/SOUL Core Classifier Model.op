@@ -32,6 +32,6 @@ SOUL Core Classifier Model
 		Training
 		
 			-
-				Before training the neural network, the ouput of the input/output/correlation set
+				Before training the neural network, the output of the input/output/correlation set
 				will be added to the output vector if said value is not already in it.
 			-
