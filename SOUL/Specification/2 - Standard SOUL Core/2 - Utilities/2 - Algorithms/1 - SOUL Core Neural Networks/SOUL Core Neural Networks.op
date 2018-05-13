@@ -62,3 +62,11 @@ SOUL Core Neural Networks
 				will be multiplied by the error of each weight, and the resulting value will be
 				what is added to the weight.
 			-
+		
+		String Conversion
+			
+			-
+				The values assigned to the neurons of the input layer and the values returned by
+				the output layer can be used to represent characters in a string by multiplying
+				said value by 1114112 and flooring the result to get a Unicode character value.
+			-
