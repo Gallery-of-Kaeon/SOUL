@@ -14,8 +14,7 @@ SOUL Core Neural Networks
 			-
 				The neural network will begin with the initial size of the output layer and the
 				ratio of the number of neurons between the hidden layer and output layer. All
-				connections between the hidden and output layers will be assigned random numbers
-				between zero and one.
+				connections between the hidden and output layers will be assigned a weight of zero.
 				
 				The default ratio will be one to one.
 			-
