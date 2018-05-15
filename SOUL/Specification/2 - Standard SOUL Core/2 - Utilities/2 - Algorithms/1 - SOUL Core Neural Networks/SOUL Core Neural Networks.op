@@ -33,12 +33,12 @@ SOUL Core Neural Networks
 				The input vector must be dynamically reset each time the neural network is used.
 				
 				The weights between the input layer and the hidden layer are determined by the
-				following equation, where Ni is the index of the input neuron within the input
+				following formula, where Ni is the index of the input neuron within the input
 				layer, Li is the number of neurons within the input layer, Nh is the index of the
 				hidden neuron within the hidden layer, and Lh is the number of neurons within the
 				hidden layer:
 				
-				(Ni / Li) / (Nh / Lh)
+				1 - |((Ni / Li) - (Nh / Lh))|
 				
 				However, if any of the aforementioned values are zero, then the weight will be set
 				to zero.
