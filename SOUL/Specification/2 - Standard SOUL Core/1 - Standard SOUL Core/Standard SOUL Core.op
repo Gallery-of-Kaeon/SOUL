@@ -12,7 +12,7 @@ Standard SOUL Core
 		SOUL Core Models
 			
 			-
-				As their are various ways of implementing artificial intelligence, there are
+				As there are various ways of implementing artificial intelligence, there are
 				various ways of implementing a SOUL Core, some of which my be more suited to
 				certain tasks. The various possible implementations of a standard SOUL core, which
 				are referred to as models, must each have a name with which they can be identified
