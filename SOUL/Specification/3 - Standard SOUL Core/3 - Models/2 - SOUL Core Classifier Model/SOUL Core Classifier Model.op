@@ -1,0 +1,37 @@
+SOUL Core Classifier Model
+
+	Philosophy
+	
+		-
+			The SOUL core classifier model is a model for the standard SOUL core that uses one soul
+			core neural network to correlate between a variable length input string and a set of
+			pre-determined output strings.
+		-
+	
+	Principles
+		
+		Options Vector
+		
+			-
+				The options vector is a list of strings the model may return.
+				
+				The neural networks output vector will have one neuron for every string in the
+				options vector, or will have one neuron if the options vector is empty.
+			-
+		
+		Processing
+		
+			-
+				If the options vector is empty, an empty string will be returned during processing.
+				
+				The input layer is formed by a converted string. After running the input through
+				the neural network, the value from the options vector corresponding to the neuron
+				with the highest value will be returned.
+			-
+		
+		Training
+		
+			-
+				Before training the neural network, the output of the input/output/correlation set
+				will be added to the output vector if said value is not already in it.
+			-
