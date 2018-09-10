@@ -40,8 +40,11 @@ SOUL Core Neural Networks
 				
 				1 - |((Ni / Li) - (Nh / Lh))|
 				
-				However, if any of the aforementioned values are zero, then the weight will be set
-				to zero.
+				The index values start at one, unless their corresponding length value is zero, in
+				which case their value will be zero.
+				
+				If either of the length values are zero, then formula will be skipped and the
+				weight will be set to zero to avoid a divide by zero error.
 			-
 		
 		Scaling
