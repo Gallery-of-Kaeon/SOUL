@@ -48,6 +48,6 @@ SOUL
 				Philosopher's Stone they are connected to, they must contain one SOUL Core.
 				
 				Every time they receive a packet through the on call function, they must run the
-				contents of the packet through each core, and then call the core's respective
-				connection using the output.
+				contents of the packet through each core's generate function using a correlation
+				argument of one, and then call the core's respective connection using the output.
 			-
