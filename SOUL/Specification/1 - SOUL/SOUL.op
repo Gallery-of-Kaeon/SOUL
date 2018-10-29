@@ -14,7 +14,7 @@ SOUL
 				A SOUL Core is an object that can be trained to correlate between input and output
 				strings.
 				
-				It contains a corpus of correlations between input and output strings, and has four
+				It contains a corpus of correlations between input and output strings, and has five
 				functions.
 				
 				The first function is the train function. This function takes two strings and a
@@ -22,14 +22,19 @@ SOUL
 				the output, and the number represents how well the input and the output match up.
 				Based on this correlation, the function updates the corpus.
 				
-				The second function is the generate function. This function takes one string as an
-				input, and returns a string based on how the input strings matches up with the
-				contents of the corpus.
+				The second function is the generate function. This function takes one string and a
+				number between zero and one, and returns a string that correlates to the passed in
+				string as well as specified by the passed in number.
 				
-				The third function is the load function. This function takes a string and rewrites
+				The third function is the correlate function. This function takes two strings, and
+				returns a number between zero and one based on how well the second string
+				correlates to the first string assuming that the second string is output and the
+				first string is input.
+				
+				The fourth function is the load function. This function takes a string and rewrites
 				its corpus based on the content of the string.
 				
-				The fourth function is the write function. This function returns the state of the
+				The fifth function is the write function. This function returns the state of the
 				corpus in the form of a string such that the corpus could be returned to its
 				current state by calling the load function with the returned string.
 			-
