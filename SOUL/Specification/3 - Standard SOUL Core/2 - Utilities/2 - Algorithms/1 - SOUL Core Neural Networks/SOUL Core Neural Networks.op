@@ -52,7 +52,7 @@ SOUL Core Neural Networks
 			-
 				The ratio of the number of neurons between the hidden layer and the output layer
 				must remain constant. Whenever the output layer is resized, any neurons added to
-				the hidden layer to keep set ratio constant will be given weights of zero for all
+				the hidden layer to keep said ratio constant will be given weights of zero for all
 				connections to neurons in the output layer.
 			-
 		
