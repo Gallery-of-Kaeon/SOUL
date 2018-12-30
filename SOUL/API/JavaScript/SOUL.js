@@ -25,22 +25,22 @@ class SOULCoreModel {
 	}
 }
 
-class SoulCoreNeuralNetwork {
+class SOULCoreNeuralNetwork {
 	
-	constructor(size) {
+	constructor() {
 		this.weights = []; // [[weight, ... etc.], ... etc.]
 	}
 	
-	function getGradient(input) {
+	getGradient(input) {
 		
-		gradient = [];
+		let gradient = [];
 		
-		for(let i = 0; i < weights.length; i++) {
+		for(let i = 0; i < this.weights.length; i++) {
 			
-			sum = 0;
+			let sum = 0;
 			
 			for(let j = 0; j < input.length; j++)
-				sum += 1 - Math.abs((j / input.length) - (i / weights.length));
+				sum += 1 - Math.abs((j / input.length) - (i / this.weights.length));
 			
 			gradient.push(sigmoid(sum));
 		}
@@ -48,7 +48,7 @@ class SoulCoreNeuralNetwork {
 		return gradient;
 	}
 	
-	function train(input, output, correlation) {
+	train(input, output, correlation) {
 			
 		while(this.weights.length < output.length)
 			this.weights.push([]);
@@ -59,7 +59,7 @@ class SoulCoreNeuralNetwork {
 				this.weights[i].push(0);
 		}
 		
-		let train = generate(input, 1);
+		let train = this.generate(input, 1);
 		
 		for(let i = 0; i < train.length; i++) {
 		
@@ -78,15 +78,15 @@ class SoulCoreNeuralNetwork {
 		}
 	}
 	
-	function generate(input, correlation) {
+	generate(input, correlation) {
 		
-		let gradient = getGradient(input);
+		let gradient = this.getGradient(input);
 		
 		let output = [];
 		
 		for(let i = 0; i < gradient.length; i++) {
 			
-			sum = 0;
+			let sum = 0;
 			
 			for(let j = 0; j < this.weights[i].length; j++)
 				sum += gradient[i] * this.weights[i][j] * correlation;
@@ -97,9 +97,9 @@ class SoulCoreNeuralNetwork {
 		return output;
 	}
 	
-	function correlate(input, output) {
+	correlate(input, output) {
 		
-		let value = generate(input, 1);
+		let value = this.generate(input, 1);
 		
 		let correlation = 1;
 		
@@ -129,6 +129,9 @@ class SoulCoreNeuralNetwork {
 class DefaultSOULCoreModel extends SOULCoreModel {
 	
 	constructor() {
+	
+		super();
+	
 		this.size = new SOULCoreNeuralNetwork();
 		this.data = new SOULCoreNeuralNetwork();
 	}
@@ -162,7 +165,7 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 	}
 	
 	train(input, output, correlation) {
-		this.size.train(input, numberToBinarySize(output.length), correlation);
+		this.size.train(input, this.numberToBinarySize(output.length), correlation);
 		this.data.train(input, output, correlation);
 	}
 	
@@ -170,7 +173,7 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 		
 		let numbers = stringToNumbers(input);
 		
-		let size = binarySizeToNumber(this.size.generate(numbers, correlation));
+		let size = this.binarySizeToNumber(this.size.generate(numbers, correlation));
 		let data = this.data.generate(numbers, correlation);
 		
 		if(size < data.length)
@@ -180,7 +183,7 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 		while(size > data.length)
 			data.push(0);
 		
-		return numbersToString(dataOutput);
+		return numbersToString(data);
 	}
 	
 	correlate(input, output) {
@@ -211,14 +214,14 @@ class SOULCore {
 		this.corpus = []; // [[input, output, correlation], ... etc.]
 		
 		this.models = [new DefaultSOULCoreModel()];
-		this.model = models[0];
+		this.model = this.models[0];
 	}
 
 	train(input, output, correlation) {
 		
 		this.corpus.push([input, output, correlation]);
 		
-		for(let i = 0; i < models.length; i++)
+		for(let i = 0; i < this.models.length; i++)
 			this.models[i].train(input, output, correlation);
 	}
 
@@ -253,7 +256,7 @@ class SOULCore {
 
 class SOUL extends philosophersStone.PhilosophersStone {
 	
-	constructor {
+	constructor() {
 		this.cores = []; // [[gate, transform], ... etc.]
 	}
 	
