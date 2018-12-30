@@ -48,19 +48,81 @@ class SoulCoreNeuralNetwork {
 		return gradient;
 	}
 	
-	function generate(input, correlation) {
+	function train(input, output, correlation) {
+			
+		while(this.weights.length < output.length)
+			this.weights.push([]);
 		
-		gradient = getGradient(input);
+		for(let i = 0; i < this.weights.length; i++) {
+			
+			while(this.weights[i].length < output.length)
+				this.weights[i].push(0);
+		}
 		
-		// STUB
+		let train = generate(input, 1);
+		
+		for(let i = 0; i < train.length; i++) {
+		
+			let error = output[i] - train[i];
+			
+			if(error == 0)
+				continue;
+			
+			let weight = 0;
+			
+			for(let j = 0; j < this.weights.length; j++)
+				weight += this.weights[j][i];
+			
+			for(let j = 0; j < this.weights.length; j++)
+				this.weights[j][i] += (this.weights[j][i] / weight) * error * correlation;
+		}
 	}
 	
-	function train(input, output, correlation) {
-		// STUB
+	function generate(input, correlation) {
+		
+		let gradient = getGradient(input);
+		
+		let output = [];
+		
+		for(let i = 0; i < gradient.length; i++) {
+			
+			sum = 0;
+			
+			for(let j = 0; j < this.weights[i].length; j++)
+				sum += gradient[i] * this.weights[i][j] * correlation;
+			
+			output.push(sigmoid(sum));
+		}
+		
+		return output;
 	}
 	
 	function correlate(input, output) {
-		// STUB
+		
+		let value = generate(input, 1);
+		
+		let correlation = 1;
+		
+		for(let i = 0; i < output.size; i++) {
+			
+			if(output[i] == 0 || value[i] == 0) {
+			
+				if(output[i] != 0 || value[i] != 0)
+					continue;
+				
+				correlation *=
+					output[i] != 0 ?
+						1 - sigmoid(value[i]) :
+						1 - sigmoid(output[i]);
+			}
+			
+			correlation *=
+				output[i] > value[i] ?
+					value[i] / output[i] :
+					output[i] / value[i];
+		}
+		
+		return correlation;
 	}
 }
 
@@ -71,7 +133,7 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 		this.data = new SOULCoreNeuralNetwork();
 	}
 	
-	function binarySizeToNumber(size) {
+	binarySizeToNumber(size) {
 		
 		let number = 0;
 		
@@ -81,13 +143,27 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 		return number;
 	}
 	
-	function numberToBinarySize(number) {
+	numberToBinarySize(number) {
+		
+		let binary = number.toString(2);
 		
 		let size = [];
 		
-		// STUB
+		for(let i = 0; i < binary.length; i++) {
 		
+			if(binary.charAt(i) == '0')
+				size.push(0);
+			
+			else
+				size.push(1);
+		}
+				
 		return size;
+	}
+	
+	train(input, output, correlation) {
+		this.size.train(input, numberToBinarySize(output.length), correlation);
+		this.data.train(input, output, correlation);
 	}
 	
 	generate(input, correlation) {
@@ -140,16 +216,22 @@ class SOULCore {
 
 	train(input, output, correlation) {
 		
+		this.corpus.push([input, output, correlation]);
+		
 		for(let i = 0; i < models.length; i++)
-			models[i].train(input, output, correlation);
+			this.models[i].train(input, output, correlation);
 	}
 
 	generate(input, correlation) {
-		model.generate(input, correlation);
+		
+		if(correlation == null)
+			correlation = 1;
+		
+		this.model.generate(input, correlation);
 	}
 
 	correlate(input, output) {
-		model.correlate(input, output);
+		this.model.correlate(input, output);
 	}
 
 	load(corpus) {
@@ -184,7 +266,7 @@ class SOUL extends philosophersStone.PhilosophersStone {
 	}
 }
 
-function connectSOUL(soulStone, stone) {
+function connectSOUL(soulStone, stone, cores, transform) {
 	// STUB
 }
 
@@ -232,6 +314,10 @@ function sigmoid(number) {
 	return 1 / (1 + Math.pow(Math.E, -number));
 }
 
+function inverseSigmoid(number) {
+	return Math.log(number / (1 - number));
+}
+
 module.exports = {
 
 	SOULCoreModel,
@@ -246,5 +332,7 @@ module.exports = {
 	getGatewayCore,
 	getTransformationCore,
 	stringToNumbers,
-	numbersToString
+	numbersToString,
+	sigmoid,
+	inverseSigmoid
 };
