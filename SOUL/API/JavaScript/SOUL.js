@@ -40,8 +40,8 @@ class SOULCoreNeuralNetwork {
 			let sum = 0;
 			
 			for(let j = 0; j < input.length; j++)
-				sum += 1 - Math.abs((j / input.length) - (i / this.weights.length));
-			
+				sum += (1 - Math.abs((j / input.length) - (i / this.weights.length))) * input[j];
+
 			gradient.push(sigmoid(sum));
 		}
 		
@@ -49,48 +49,39 @@ class SOULCoreNeuralNetwork {
 	}
 	
 	train(input, output, correlation) {
-			
+
 		while(this.weights.length < output.length)
 			this.weights.push([]);
 		
 		for(let i = 0; i < this.weights.length; i++) {
 			
 			while(this.weights[i].length < output.length)
-				this.weights[i].push(0);
+				this.weights[i].push(0); // 0 or Random
 		}
-		
+
 		let train = this.generate(input, 1);
-		
-		for(let i = 0; i < train.length; i++) {
+
+		for(let i = 0; i < train.length && i < output.length; i++) {
 		
 			let error = output[i] - train[i];
-			
-			if(error == 0)
-				continue;
-			
-			let weight = 0;
-			
+
 			for(let j = 0; j < this.weights.length; j++)
-				weight += this.weights[j][i];
-			
-			for(let j = 0; j < this.weights.length; j++)
-				this.weights[j][i] += (this.weights[j][i] / weight) * error * correlation;
+				this.weights[j][i] += (error / this.weights.length) * correlation;
 		}
 	}
 	
 	generate(input, correlation) {
-		
+
 		let gradient = this.getGradient(input);
-		
 		let output = [];
-		
+
 		for(let i = 0; i < gradient.length; i++) {
 			
 			let sum = 0;
 			
 			for(let j = 0; j < this.weights[i].length; j++)
 				sum += gradient[i] * this.weights[i][j] * correlation;
-			
+
 			output.push(sigmoid(sum));
 		}
 		
@@ -140,7 +131,7 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 		
 		let number = 0;
 		
-		for(let i = 0; i < size; i++)
+		for(let i = 0; i < size.length; i++)
 			number += size[i] < .5 ? 0 : Math.pow(2, i);
 		
 		return number;
@@ -160,13 +151,13 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 			else
 				size.push(1);
 		}
-				
+		
 		return size;
 	}
 	
 	train(input, output, correlation) {
-		this.size.train(input, this.numberToBinarySize(output.length), correlation);
-		this.data.train(input, output, correlation);
+		this.size.train(stringToNumbers(input, 127), this.numberToBinarySize(output.length), correlation);
+		this.data.train(stringToNumbers(input, 127), stringToNumbers(output, 127), correlation);
 	}
 	
 	generate(input, correlation) {
@@ -182,8 +173,8 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 		// This may be omitted later.
 		while(size > data.length)
 			data.push(0);
-		
-		return numbersToString(data);
+
+		return numbersToString(data, 127);
 	}
 	
 	correlate(input, output) {
@@ -230,11 +221,11 @@ class SOULCore {
 		if(correlation == null)
 			correlation = 1;
 		
-		this.model.generate(input, correlation);
+		return this.model.generate(input, correlation);
 	}
 
 	correlate(input, output) {
-		this.model.correlate(input, output);
+		return this.model.correlate(input, output);
 	}
 
 	load(corpus) {
@@ -293,22 +284,28 @@ function getTransformationCore(soulStone, stone) {
 	// STUB
 }
 	
-function stringToNumbers(string) {
+function stringToNumbers(string, maxValue) {
+
+	if(maxValue == null)
+		maxValue = Math.pow(2, 16) - 1;
 	
 	let numbers = [];
 	
 	for(let i = 0; i < string.length; i++)
-		numbers.push(string.charCodeAt(i));
+		numbers.push(string.charCodeAt(i) / maxValue);
 	
 	return numbers;
 }
 	
-function numbersToString(numbers) {
+function numbersToString(numbers, maxValue) {
+
+	if(maxValue == null)
+		maxValue = Math.pow(2, 16) - 1;
 
 	let string = "";
 	
 	for(let i = 0; i < numbers.length; i++)
-		string += String.fromCharCode(numbers[i]);
+		string += String.fromCharCode(Math.floor(numbers[i] * maxValue));
 	
 	return string;
 }
