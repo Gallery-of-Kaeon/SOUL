@@ -56,7 +56,7 @@ class SOULCoreNeuralNetwork {
 		for(let i = 0; i < this.weights.length; i++) {
 			
 			while(this.weights[i].length < output.length)
-				this.weights[i].push(0); // 0 or Random
+				this.weights[i].push(0); // 0, 0.5, or Random
 		}
 
 		let train = this.generate(input, 1);
@@ -117,7 +117,7 @@ class SOULCoreNeuralNetwork {
 	}
 }
 
-class DefaultSOULCoreModel extends SOULCoreModel {
+class SOULCoreVariableModel extends SOULCoreModel {
 	
 	constructor() {
 	
@@ -198,13 +198,84 @@ class DefaultSOULCoreModel extends SOULCoreModel {
 	}
 }
 
+class SOULCoreClassifierModel extends SOULCoreModel {
+	
+	constructor() {
+	
+		super();
+	
+		this.data = new SOULCoreNeuralNetwork();
+		this.options = [];
+	}
+
+	addOption(option) {
+
+		for(let i = 0; i < this.options.length; i++) {
+
+			if(this.options[i] == option)
+				return;
+		}
+
+		this.options.push(option);
+	}
+
+	getChoice(output) { // Alternate: output, correlation
+		
+		let choice = [];
+
+		for(let i = 0; i < this.options.length; i++)
+			choice.push(this.options[i] == output ? 1 : 0); // Alternate: correlation : 1 - correlation
+
+		return choice;
+	}
+
+	getResult(generation) {
+
+		if(this.options.length == 0)
+			return "";
+
+		let max = 0;
+		
+		for(let i = 1; i < generation.length && i < this.options.length; i++) {
+
+			if(generation[i] > generation[max])
+				max = i;
+		}
+
+		return this.options[max];
+	}
+
+	train(input, output, correlation) {
+
+		this.addOption(output);
+
+		this.data.train(stringToNumbers(input), this.getChoice(output), correlation);
+	}
+
+	generate(input, correlation) {
+		return this.getResult(this.data.generate(stringToNumbers(input), correlation));
+	}
+
+	correlate(input, output) {
+		return this.data.correlate(stringToNumbers(input), this.getChoice(output));
+	}
+
+	load(corpus) {
+		// STUB
+	}
+
+	write() {
+		// STUB
+	}
+}
+
 class SOULCore {
 
 	constructor() {
 		
 		this.corpus = []; // [[input, output, correlation], ... etc.]
 		
-		this.models = [new DefaultSOULCoreModel()];
+		this.models = [new SOULCoreVariableModel(), new SOULCoreClassifierModel()];
 		this.model = this.models[0];
 	}
 
@@ -240,8 +311,8 @@ class SOULCore {
 		this.models.push(model);
 	}
 	
-	setModel(model) {
-		// STUB
+	setModel(index) {
+		this.model = this.models(index);
 	}
 }
 
@@ -322,7 +393,7 @@ module.exports = {
 
 	SOULCoreModel,
 	SOULCoreNeuralNetwork,
-	DefaultSOULCoreModel,
+	SOULCoreVariableModel,
 	SOULCore,
 	SOUL,
 	connectSOUL,
