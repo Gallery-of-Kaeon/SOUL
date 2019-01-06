@@ -4,6 +4,10 @@ var philosophersStone = require("./PhilosophersStone.js");
 
 class SOULCoreModel {
 
+	constructor() {
+		this.name = "";
+	}
+
 	train(input, output, correlation) {
 		
 	}
@@ -122,6 +126,8 @@ class SOULCoreVariableModel extends SOULCoreModel {
 	constructor() {
 	
 		super();
+		
+		this.name = "SOUL Core Variable Model";
 	
 		this.size = new SOULCoreNeuralNetwork();
 		this.data = new SOULCoreNeuralNetwork();
@@ -203,6 +209,8 @@ class SOULCoreClassifierModel extends SOULCoreModel {
 	constructor() {
 	
 		super();
+		
+		this.name = "SOUL Core Classifier Model";
 	
 		this.data = new SOULCoreNeuralNetwork();
 		this.options = [];
@@ -308,11 +316,30 @@ class SOULCore {
 	}
 	
 	addModel(model) {
+
+		for(let i = 0; i < this.models.length; i++) {
+
+			if(this.models[i].name.toLowerCase() == model.name.toLowerCase())
+				return;
+		}
+
+		for(let i = 0; i < this.corpus.size; i++)
+			model.train(this.corpus[i][0], this.corpus[i][1], this.corpus[i][2]);
+
 		this.models.push(model);
 	}
 	
-	setModel(index) {
-		this.model = this.models(index);
+	setModel(name) {
+
+		for(let i = 0; i < this.models.length; i++) {
+
+			if(this.models[i].name.toLowerCase() == name.toLowerCase()) {
+				
+				this.model = this.models[i];
+
+				return;
+			}
+		}
 	}
 }
 
@@ -394,6 +421,7 @@ module.exports = {
 	SOULCoreModel,
 	SOULCoreNeuralNetwork,
 	SOULCoreVariableModel,
+	SOULCoreClassifierModel,
 	SOULCore,
 	SOUL,
 	connectSOUL,
