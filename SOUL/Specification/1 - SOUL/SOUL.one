@@ -1,15 +1,18 @@
-SOUL
-	
-	Philosophy
-		
+-
+	SOUL
+-
+	-
+		Philosophy
+	-
 		-
 			SOUL is a general purpose AI utility that can be embedded into a philosopher's atlas.
 		-
-	
-	Principles
-		
-		SOUL Core
-			
+	-
+		Principles
+	-
+		-
+			SOUL Core
+		-
 			-
 				A SOUL Core is an object that can be trained to correlate between input and output
 				strings.
@@ -38,9 +41,9 @@ SOUL
 				corpus in the form of a string such that the corpus could be returned to its
 				current state by calling the load function with the returned string.
 			-
-			
-		SOULs
-			
+		-	
+			SOULs
+		-
 			-
 				SOULs are a special type of Philosopher's Stone.
 				
