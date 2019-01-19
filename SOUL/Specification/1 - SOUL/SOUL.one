@@ -45,22 +45,22 @@
 			SOULs
 		-
 			-
-				SOULs are a special type of Philosopher's Stone.
+				SOULs are a special type of Philosopher's Stone Module.
 				
-				They may be connected to any type of Philosopher's Stone. For every other
-				Philosopher's Stone they are connected to, they must contain two SOUL Cores, the
-				gateway core and the transformation core respectively.
+				They may be connected to any type of module within a Philosopher's Atlas. For every
+				other module they are connected to, they must contain two SOUL Cores, the gateway
+				core and the transformation core respectively.
 				
-				Every time they receive a packet through the on call function, they must run the
+				Every time they receive a packet through the standard function, they must run the
 				contents of the packet through each gateway core's generate function to produce a
 				binary value representing a positive or negative result. If the result is positive,
 				the generate function of the transformation core that corresponds the gateway core
 				in question shall be called using a correlation argument of one, and then the
-				gateway core's respective connected Philosopher's Stone will be called using the
-				aforementioned transformation core's generate function's output.
+				gateway core's respective connected module will be called using the aforementioned
+				transformation core's generate function's output.
 				
 				Additionally, a SOUL shall have an operation function, which shall take a single
 				string and may be overridden to perform any operation based on said string. The
 				operation function shall be called using every value passed to its respective
-				SOUL's on call function.
+				SOUL's standard function.
 			-
