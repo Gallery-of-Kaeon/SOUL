@@ -1,0 +1,37 @@
+-
+	SOUL Philosopher's Medium
+-
+	-
+		Philosophy
+	-
+		-
+			A module that abides by the SOUL Philosopher's Medium serves as a universal black box
+			for machine learning models.
+
+			A module that abide by the SOUL Philosopher's Medium shall be known as a SOUL.
+		-
+	-
+		Principles
+	-
+		-
+			Functionality
+		-
+			-
+				A module that abides by the SOUL Philosopher's Medium contains a corpus of
+				correlations between input and output values, and has three functions.
+				
+				The first function is the train function. This function takes two values and a
+				number between zero and one. The first value is the input, the second value is the
+				output, and the number represents how well the input and the output match up. Based
+				on this correlation, the function updates the corpus.
+				
+				The second function is the generate function. This function takes one value and a
+				number between zero and one, and returns an value that correlates to the passed in
+				value as well as specified by the passed in number.
+				
+				The third function is the correlate function. This function takes two values, and
+				returns a number between zero and one based on how well the second value correlates
+				to the first value assuming that the second value is output and the first value is
+				the input for supervised models, or on how similar the two values are to each other
+				for unsupervised models.
+			-
