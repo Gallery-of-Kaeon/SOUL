@@ -1,0 +1,10 @@
+Data Map Curve
+
+	Philosophy
+
+		-
+			An data map curve is a multidimensional curve of bit fit for a data map.
+
+			When generating the curve, the inputs of the pairs in the data map must all be the same
+			length.
+		-
