@@ -3,8 +3,8 @@ Binary Cropping
 	Philosophy
 
 		-
-			Binary cropping is a method for culling the output of machine learning algorithms where
-			outputs may be of variable length.
+			Binary cropping is a method for culling the output of operations where outputs are
+			vectors of variable length containing numbers between zero and one, inclusive.
 		-
 	
 	Principles
@@ -12,7 +12,7 @@ Binary Cropping
 		Vector Set
 
 			-
-				When an input is received, it is passed to two separate models, each of which
+				When an input is received, it is passed to two separate operations, each of which
 				returns a vector of numbers between zero and one.
 
 				The first vector is called the value vector, the second vector is called the
