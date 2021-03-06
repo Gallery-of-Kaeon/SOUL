@@ -1,437 +1,416 @@
-var one = require("./ONE.js");
-var onePlus = require("./ONEPlus.js");
-var philosophersStone = require("./PhilosophersStone.js");
+var moduleDependencies = {
+	ui: "https://raw.githubusercontent.com/Gallery-of-Kaeon/JavaScript-Utilities/master/JavaScript%20Utilities/UI/UI.js"
+};
 
-class SOULCoreModel {
+let platform = "browser";
 
-	constructor() {
-		this.name = "";
-	}
+if(typeof process === 'object') {
 
-	train(input, output, correlation) {
-		
-	}
+	if(typeof process.versions === 'object') {
 
-	generate(input, correlation) {
-		
-	}
-
-	correlate(input, output) {
-		
-	}
-
-	load(corpus) {
-		
-	}
-
-	write() {
-		
-	}
-}
-
-class SOULCoreNeuralNetwork {
-	
-	constructor() {
-		this.weights = []; // [[weight, ... etc.], ... etc.]
-	}
-	
-	getGradient(input) {
-		
-		let gradient = [];
-		
-		for(let i = 0; i < this.weights.length; i++) {
-			
-			let sum = 0;
-			
-			for(let j = 0; j < input.length; j++)
-				sum += (1 - Math.abs((j / input.length) - (i / this.weights.length))) * input[j];
-
-			gradient.push(sigmoid(sum));
-		}
-		
-		return gradient;
-	}
-	
-	train(input, output, correlation) {
-
-		while(this.weights.length < output.length)
-			this.weights.push([]);
-		
-		for(let i = 0; i < this.weights.length; i++) {
-			
-			while(this.weights[i].length < output.length)
-				this.weights[i].push(0); // 0, 0.5, or Random
-		}
-
-		let train = this.generate(input, 1);
-
-		for(let i = 0; i < train.length && i < output.length; i++) {
-		
-			let error = output[i] - train[i];
-
-			for(let j = 0; j < this.weights.length; j++)
-				this.weights[j][i] += (error / this.weights.length) * correlation;
-		}
-	}
-	
-	generate(input, correlation) {
-
-		let gradient = this.getGradient(input);
-		let output = [];
-
-		for(let i = 0; i < gradient.length; i++) {
-			
-			let sum = 0;
-			
-			for(let j = 0; j < this.weights[i].length; j++)
-				sum += gradient[i] * this.weights[i][j] * correlation;
-
-			output.push(sigmoid(sum));
-		}
-		
-		return output;
-	}
-	
-	correlate(input, output) {
-		
-		let value = this.generate(input, 1);
-		
-		let correlation = 1;
-		
-		for(let i = 0; i < output.size; i++) {
-			
-			if(output[i] == 0 || value[i] == 0) {
-			
-				if(output[i] != 0 || value[i] != 0)
-					continue;
-				
-				correlation *=
-					output[i] != 0 ?
-						1 - sigmoid(value[i]) :
-						1 - sigmoid(output[i]);
-			}
-			
-			correlation *=
-				output[i] > value[i] ?
-					value[i] / output[i] :
-					output[i] / value[i];
-		}
-		
-		return correlation;
-	}
-}
-
-class SOULCoreVariableModel extends SOULCoreModel {
-	
-	constructor() {
-	
-		super();
-		
-		this.name = "SOUL Core Variable Model";
-	
-		this.size = new SOULCoreNeuralNetwork();
-		this.data = new SOULCoreNeuralNetwork();
-	}
-	
-	binarySizeToNumber(size) {
-		
-		let number = 0;
-		
-		for(let i = 0; i < size.length; i++)
-			number += size[i] < .5 ? 0 : Math.pow(2, i);
-		
-		return number;
-	}
-	
-	numberToBinarySize(number) {
-		
-		let binary = number.toString(2);
-		
-		let size = [];
-		
-		for(let i = 0; i < binary.length; i++) {
-		
-			if(binary.charAt(i) == '0')
-				size.push(0);
-			
-			else
-				size.push(1);
-		}
-		
-		return size;
-	}
-	
-	train(input, output, correlation) {
-		this.size.train(stringToNumbers(input, 127), this.numberToBinarySize(output.length), correlation);
-		this.data.train(stringToNumbers(input, 127), stringToNumbers(output, 127), correlation);
-	}
-	
-	generate(input, correlation) {
-		
-		let numbers = stringToNumbers(input);
-		
-		let size = this.binarySizeToNumber(this.size.generate(numbers, correlation));
-		let data = this.data.generate(numbers, correlation);
-		
-		if(size < data.length)
-			data = data.slice(0, size);
-		
-		// This may be omitted later.
-		while(size > data.length)
-			data.push(0);
-
-		return numbersToString(data, 127);
-	}
-	
-	correlate(input, output) {
-	
-		return
-			this.data.correlate(
-				input,
-				output) *
-			this.size.correlate(
-				input,
-				numberToBinarySize(
-					output.length));
-	}
-
-	load(corpus) {
-		// STUB
-	}
-
-	write() {
-		// STUB
-	}
-}
-
-class SOULCoreClassifierModel extends SOULCoreModel {
-	
-	constructor() {
-	
-		super();
-		
-		this.name = "SOUL Core Classifier Model";
-	
-		this.data = new SOULCoreNeuralNetwork();
-		this.options = [];
-	}
-
-	addOption(option) {
-
-		for(let i = 0; i < this.options.length; i++) {
-
-			if(this.options[i] == option)
-				return;
-		}
-
-		this.options.push(option);
-	}
-
-	getChoice(output) { // Alternate: output, correlation
-		
-		let choice = [];
-
-		for(let i = 0; i < this.options.length; i++)
-			choice.push(this.options[i] == output ? 1 : 0); // Alternate: correlation : 1 - correlation
-
-		return choice;
-	}
-
-	getResult(generation) {
-
-		if(this.options.length == 0)
-			return "";
-
-		let max = 0;
-		
-		for(let i = 1; i < generation.length && i < this.options.length; i++) {
-
-			if(generation[i] > generation[max])
-				max = i;
-		}
-
-		return this.options[max];
-	}
-
-	train(input, output, correlation) {
-
-		this.addOption(output);
-
-		this.data.train(stringToNumbers(input), this.getChoice(output), correlation);
-	}
-
-	generate(input, correlation) {
-		return this.getResult(this.data.generate(stringToNumbers(input), correlation));
-	}
-
-	correlate(input, output) {
-		return this.data.correlate(stringToNumbers(input), this.getChoice(output));
-	}
-
-	load(corpus) {
-		// STUB
-	}
-
-	write() {
-		// STUB
-	}
-}
-
-class SOULCore {
-
-	constructor() {
-		
-		this.corpus = []; // [[input, output, correlation], ... etc.]
-		
-		this.models = [new SOULCoreVariableModel(), new SOULCoreClassifierModel()];
-		this.model = this.models[0];
-	}
-
-	train(input, output, correlation) {
-		
-		this.corpus.push([input, output, correlation]);
-		
-		for(let i = 0; i < this.models.length; i++)
-			this.models[i].train(input, output, correlation);
-	}
-
-	generate(input, correlation) {
-		
-		if(correlation == null)
-			correlation = 1;
-		
-		return this.model.generate(input, correlation);
-	}
-
-	correlate(input, output) {
-		return this.model.correlate(input, output);
-	}
-
-	load(corpus) {
-		// STUB
-	}
-
-	write() {
-		// STUB
-	}
-	
-	addModel(model) {
-
-		for(let i = 0; i < this.models.length; i++) {
-
-			if(this.models[i].name.toLowerCase() == model.name.toLowerCase())
-				return;
-		}
-
-		for(let i = 0; i < this.corpus.size; i++)
-			model.train(this.corpus[i][0], this.corpus[i][1], this.corpus[i][2]);
-
-		this.models.push(model);
-	}
-	
-	setModel(name) {
-
-		for(let i = 0; i < this.models.length; i++) {
-
-			if(this.models[i].name.toLowerCase() == name.toLowerCase()) {
-				
-				this.model = this.models[i];
-
-				return;
-			}
+		if(typeof process.versions.node !== 'undefined') {
+			platform = "node";
 		}
 	}
 }
 
-class SOUL extends philosophersStone.PhilosophersStone {
-	
-	constructor() {
-		this.cores = []; // [[gate, transform], ... etc.]
+if(platform == "browser")
+	require(moduleDependencies.ui).load("//unpkg.com/brain.js");
+
+else
+	var brain = require("brain.js");
+
+function binaryToNumber(binary) {
+
+	let number = "";
+
+	for(let i = 0; i < binary.length; i++)
+		number += binary[i] > .5 ? 1 : 0;
+
+	return parseInt(number, 2);
+}
+
+function decorrelate(input, correlation) {
+
+	let output = [];
+
+	for(let i = 0; i < input.length; i++) {
+
+		output.push(
+			input[i] > .5 ?
+				input[i] * correlation :
+				input[i] + (
+					(1 - input[i]) *
+					(1 - correlation)
+				)
+		);
 	}
+
+	return output;
+}
+
+function numberToBinary(number) {
 	
-	onCall(packet) {
-		// STUB
-	}
-	
-	onOperation(packet) {
-		
-	}
+	let binary = [];
+	let bits = number.toString(2);
+
+	for(let i = 0; i < bits.length; i++)
+		binary.push(Number(bits.charAt(i)));
+
+	return binary;
 }
 
-function connectSOUL(soulStone, stone, cores, transform) {
-	// STUB
-}
+function numberToString(number, max) {
 
-function disconnectSOUL(soulStone, stone) {
-	// STUB
-}
-
-function setGatewayCore(soulStone, stone, core) {
-	// STUB
-}
-
-function setTransformationCore(soulStone, stone, core) {
-	// STUB
-}
-
-function getGatewayCore(soulStone, stone) {
-	// STUB
-}
-
-function getTransformationCore(soulStone, stone) {
-	// STUB
-}
-	
-function stringToNumbers(string, maxValue) {
-
-	if(maxValue == null)
-		maxValue = Math.pow(2, 16) - 1;
-	
-	let numbers = [];
-	
-	for(let i = 0; i < string.length; i++)
-		numbers.push(string.charCodeAt(i) / maxValue);
-	
-	return numbers;
-}
-	
-function numbersToString(numbers, maxValue) {
-
-	if(maxValue == null)
-		maxValue = Math.pow(2, 16) - 1;
+	max = max != null ? max : 255;
 
 	let string = "";
-	
-	for(let i = 0; i < numbers.length; i++)
-		string += String.fromCharCode(Math.floor(numbers[i] * maxValue));
-	
+
+	for(let i = 0; i < number.length; i++)
+		string += String.fromCharCode(Math.floor(number[i] * max));
+
 	return string;
 }
 
-function sigmoid(number) {
-	return 1 / (1 + Math.pow(Math.E, -number));
+function SOUL(data) {
+
+	var reference = this;
+
+	this.correlate = function(input, output) {
+
+		try {
+
+			input = Array.isArray(input) ? input : stringToNumber(input);
+			output = Array.isArray(output) ? output : stringToNumber(output);
+	
+			if(input.length > reference.model.inputMax)
+				input = input.slice(0, reference.model.inputMax);
+	
+			else while(input.length < reference.model.inputMax)
+				input.push(0);
+	
+			if(!reference.model.optimized)
+				reference.optimize(reference.corpus);
+	
+			if(reference.model.mode == "classifier")
+				return brain.likely(input, reference.model.classifyNet) == numberToString(output, 255) ? 1 : 0;
+	
+			let value = reference.generate(input, 1);
+			
+			let average = 0;
+	
+			let i = 0;
+	
+			for(; i < output.length && i < value.length; i++)
+				average += 1 - Math.abs(output[i] - value[i]);
+	
+			if(i == 0)
+				return output.length == value.length ? 1 : 0;
+	
+			let sizeComparison = 1;
+	
+			if(output.length > value.length)
+				sizeComparison = value.length / output.length;
+	
+			else if(output.length < value.length)
+				sizeComparison = output.length / value.length;
+	
+			return (average / i) * sizeComparison;
+		}
+
+		catch(error) {
+			return 0;
+		}
+	};
+
+	this.degenerate = function(output, correlation) {
+
+		try {
+
+			output = Array.isArray(output) ? output : stringToNumber(output);
+	
+			correlation = correlation != null ? correlation : 1;
+	
+			if(reference.model.mode == "classifier")
+				return [];
+	
+			if(!reference.model.optimized)
+				reference.optimize();
+	
+			output = decorrelate(output, correlation);
+	
+			let size = numberToBinary(output.length);
+			let sizeMax = numberToBinary(reference.model.outputMax).length;
+	
+			if(output.length > reference.model.outputMax)
+				output = output.slice(0, reference.model.outputMax);
+	
+			else while(output.length < reference.model.outputMax)
+				output.push(0);
+	
+			if(size.length > sizeMax)
+				size = size.slice(0, sizeMax);
+	
+			else while(size.length < sizeMax)
+				size.push(0);
+	
+			let sizeOutput = binaryToNumber(reference.model.sizeNetReverse.run(output));
+			let valueOutput = Object.values(reference.model.valueNetReverse.run(output));
+	
+			if(valueOutput.length > sizeOutput)
+				valueOutput = valueOutput.slice(0, sizeOutput);
+	
+			else while(valueOutput.length < sizeOutput)
+				valueOutput.push(0);
+	
+			return valueOutput;
+		}
+
+		catch(error) {
+			return [];
+		}
+	};
+
+	this.deserialize = function(data) {
+		
+		data = JSON.parse(data);
+
+		reference.corpus = data.corpus;
+
+		reference.model = { };
+
+		reference.model.classifyNet = new brain.NeuralNetwork();
+		reference.model.inputMax = data.model.inputMax;
+		reference.model.mode = data.model.mode;
+		reference.model.optimized = data.model.optimized;
+		reference.model.outputMax = data.model.outputMax;
+		reference.model.sizeNet = new brain.NeuralNetwork();
+		reference.model.sizeNetReverse = new brain.NeuralNetwork();
+		reference.model.valueNet = new brain.NeuralNetwork();
+		reference.model.valueNetReverse = new brain.NeuralNetwork();
+
+		reference.model.classifyNet.fromJSON(JSON.parse(data.model.classifyNet));
+		reference.model.sizeNet.fromJSON(JSON.parse(data.model.sizeNet));
+		reference.model.sizeNetReverse.fromJSON(JSON.parse(data.model.sizeNetReverse));
+		reference.model.valueNet.fromJSON(JSON.parse(data.model.valueNet));
+		reference.model.valueNetReverse.fromJSON(JSON.parse(data.model.valueNetReverse));
+	};
+
+	this.generate = function(input, correlation) {
+
+		try {
+
+			input = Array.isArray(input) ? input : stringToNumber(input, 255);
+	
+			if(input.length > reference.model.inputMax)
+				input = input.slice(0, reference.model.inputMax);
+	
+			else while(input.length < reference.model.inputMax)
+				input.push(0);
+	
+			correlation = correlation != null ? correlation : 1;
+	
+			if(!reference.model.optimized)
+				reference.optimize(reference.corpus);
+	
+			if(reference.model.mode == "classifier")
+				return stringToNumber(brain.likely(input, reference.model.classifyNet), 255);
+	
+			input = decorrelate(input, correlation);
+	
+			let size = numberToBinary(input.length);
+			let sizeMax = numberToBinary(reference.model.inputMax).length;
+	
+			if(size.length > sizeMax)
+				size = size.slice(0, sizeMax);
+	
+			else while(size.length < sizeMax)
+				size.push(0);
+	
+			let sizeOutput = binaryToNumber(reference.model.sizeNet.run(input));
+			let valueOutput = Object.values(reference.model.valueNet.run(input));
+	
+			if(valueOutput.length > sizeOutput)
+				valueOutput = valueOutput.slice(0, sizeOutput);
+	
+			else while(valueOutput.length < sizeOutput)
+				valueOutput.push(0);
+	
+			return valueOutput;
+		}
+
+		catch(error) {
+			return [];
+		}
+	};
+
+	this.getModel = function() {
+		return reference.model.mode;
+	};
+
+	this.optimize = function(corpus) {
+
+		corpus = corpus != null ? corpus : reference.corpus;
+
+		let dataClassify = [];		
+
+		let data = [];
+		let dataReverse = [];
+		
+		let dataSize = [];
+		let dataSizeReverse = [];
+
+		let sizeMax = numberToBinary(reference.model.outputMax).length;
+		let sizeMaxReverse = numberToBinary(reference.model.inputMax).length;
+
+		for(let i = 0; i < corpus.length; i++) {
+
+			let itemInput = corpus[i][0];
+			let itemOutput = corpus[i][1];
+
+			let itemInputSize = numberToBinary(corpus[i][0].length);
+			let itemOutputSize = numberToBinary(corpus[i][1].length);
+
+			let correlation = corpus[i][2];
+
+			while(itemInput.length < reference.model.inputMax)
+				itemInput.push(0);
+
+			while(itemOutput.length < reference.model.outputMax)
+				itemOutput.push(0);
+
+			while(itemInputSize.length < sizeMax)
+				itemInputSize.push(0);
+
+			while(itemOutputSize.length < sizeMaxReverse)
+				itemOutputSize.push(0);
+
+			let classifyOutput = { };
+			classifyOutput[numberToString(corpus[i][1], 255)] = correlation;
+
+			dataClassify.push({
+				input: itemInput,
+				output: classifyOutput
+			});
+
+			data.push({
+				input: itemInput,
+				output: decorrelate(itemOutput, correlation)
+			});
+
+			dataReverse.push({
+				input: itemOutput,
+				output: decorrelate(itemInput, correlation)
+			});
+
+			dataSize.push({
+				input: itemInput,
+				output: decorrelate(itemOutputSize, correlation)
+			});
+
+			dataSizeReverse.push({
+				input: itemOutput,
+				output: decorrelate(itemInputSize, correlation)
+			});
+		}
+
+		reference.model.classifyNet = new brain.NeuralNetwork();
+
+		reference.model.valueNet = new brain.NeuralNetwork();
+		reference.model.valueNetReverse = new brain.NeuralNetwork();
+
+		reference.model.sizeNet = new brain.NeuralNetwork();
+		reference.model.sizeNetReverse = new brain.NeuralNetwork();
+
+		reference.model.classifyNet.train(dataClassify);
+
+		reference.model.valueNet.train(data);
+		reference.model.valueNetReverse.train(dataReverse);
+
+		reference.model.sizeNet.train(dataSize);
+		reference.model.sizeNetReverse.train(dataSizeReverse);
+
+		reference.model.optimized = true;
+	};
+
+	this.serialize = function() {
+		
+		return JSON.stringify({
+			corpus: reference.corpus,
+			model: {
+				classifyNet: JSON.stringify(reference.model.classifyNet.toJSON()),
+				inputMax: reference.model.inputMax,
+				mode: reference.model.mode,
+				optimized: reference.model.optimized,
+				outputMax: reference.model.outputMax,
+				sizeNet: JSON.stringify(reference.model.sizeNet.toJSON()),
+				sizeNetReverse: JSON.stringify(reference.model.sizeNetReverse.toJSON()),
+				valueNet: JSON.stringify(reference.model.valueNet.toJSON()),
+				valueNetReverse: JSON.stringify(reference.model.valueNetReverse.toJSON())
+			}
+		});
+	};
+
+	this.setModel = function(model) {
+		reference.model.mode = model.trim().toLowerCase();
+	};
+
+	this.train = function(input, output, correlation) {
+
+		input = Array.isArray(input) ? input : stringToNumber(input, 255);
+		output = Array.isArray(output) ? output : stringToNumber(output, 255);
+
+		correlation = correlation != null ? correlation : 1;
+
+		reference.corpus.push([input, output, correlation]);
+
+		if(input.length > reference.model.inputMax)
+			reference.model.inputMax = input.length;
+
+		if(output.length > reference.model.outputMax)
+			reference.model.outputMax = output.length;
+
+		reference.model.optimized = false;
+	};
+
+	if(data == null) {
+
+		this.corpus = [];
+	
+		this.model = {
+			classifyNet: new brain.NeuralNetwork(),
+			inputMax: 0,
+			mode: "variable",
+			optimized: true,
+			outputMax: 0,
+			sizeNet: new brain.NeuralNetwork(),
+			sizeNetReverse: new brain.NeuralNetwork(),
+			valueNet: new brain.NeuralNetwork(),
+			valueNetReverse: new brain.NeuralNetwork()
+		};
+	}
+
+	else
+		this.deserialize(data);
 }
 
-function inverseSigmoid(number) {
-	return Math.log(number / (1 - number));
+function stringToNumber(string, max) {
+
+	max = max != null ? max : 255;
+
+	let number = [];
+
+	for(let i = 0; i < string.length; i++)
+		number.push(string.charCodeAt(i) / max);
+
+	return number;
 }
 
 module.exports = {
-
-	SOULCoreModel,
-	SOULCoreNeuralNetwork,
-	SOULCoreVariableModel,
-	SOULCoreClassifierModel,
-	SOULCore,
+	binaryToNumber,
+	decorrelate,
+	numberToBinary,
+	numberToString,
 	SOUL,
-	connectSOUL,
-	disconnectSOUL,
-	setGatewayCore,
-	setTransformationCore,
-	getGatewayCore,
-	getTransformationCore,
-	stringToNumbers,
-	numbersToString,
-	sigmoid,
-	inverseSigmoid
+	stringToNumber
 };

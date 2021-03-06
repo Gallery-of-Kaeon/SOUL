@@ -4,13 +4,7 @@ SOUL is a set of general purpose machine learning utilities that establish a uni
 
 <h2 align="center">Contents of this Repository</h2>
 
-This repository contains a Java implementation and the specification for SOUL.
-
-### Direct Links
-
-[API](https://github.com/Gallery-of-Kaeon/SOUL/tree/master/SOUL/API)
-
-[Specification](https://github.com/Gallery-of-Kaeon/SOUL/tree/master/SOUL/Specification)
+[Source](https://github.com/Gallery-of-Kaeon/SOUL/tree/master/SOUL/API)
 
 <h2 align="center">Contact Info</h2>
 
